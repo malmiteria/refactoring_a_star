@@ -1,33 +1,22 @@
-
-try:
-    import pygame
-    import sys
-    import math
-    from tkinter import *
-    from tkinter import ttk
-    from tkinter import messagebox
-    import os
-except:
-    import install_requirements  # install packages
-
-    import pygame
-    import sys
-    import math
-    from tkinter import *
-    from tkinter import ttk
-    from tkinter import messagebox
-    import os
+import pygame
+import sys
+import math
+from tkinter import *
+from tkinter import ttk
+from tkinter import messagebox
+import os
 
 screen = pygame.display.set_mode((800, 800))
 
-class spot:
-    def __init__(self, x, y):
+class Spot:
+    def __init__(self, x, y, grid):
         self.i = x
         self.j = y
         self.f = 0
         self.g = 0
         self.h = 0
         self.neighbors = []
+        self.grid = grid
         self.previous = None
         self.obs = False
         self.closed = False
@@ -42,21 +31,36 @@ class spot:
         pygame.draw.rect(screen, color, (self.i * w, self.j * h, w, h), st)
         pygame.display.update()
 
-    def addNeighbors(self, grid):
-        i = self.i
-        j = self.j
-        if i < cols-1 and grid[self.i + 1][j].obs == False:
-            self.neighbors.append(grid[self.i + 1][j])
-        if i > 0 and grid[self.i - 1][j].obs == False:
-            self.neighbors.append(grid[self.i - 1][j])
-        if j < row-1 and grid[self.i][j + 1].obs == False:
-            self.neighbors.append(grid[self.i][j + 1])
-        if j > 0 and grid[self.i][j - 1].obs == False:
-            self.neighbors.append(grid[self.i][j - 1])
+    def addNeighbors(self):
+        if self.i < cols-1 and not self.grid[self.i + 1][self.j].obs:
+            self.neighbors.append(self.grid[self.i + 1][self.j])
+        if self.i > 0 and not self.grid[self.i - 1][self.j].obs:
+            self.neighbors.append(self.grid[self.i - 1][self.j])
+        if self.j < row-1 and not self.grid[self.i][self.j + 1].obs:
+            self.neighbors.append(self.grid[self.i][self.j + 1])
+        if self.j > 0 and not self.grid[self.i][self.j - 1].obs:
+            self.neighbors.append(self.grid[self.i][self.j - 1])
+
+class Grid:
+
+    def __init__(self, row, cols):
+        self.grid = [None] * cols
+        # create 2d array
+        for i in range(cols):
+            self.grid[i] = [None] * row
+
+        # Create Spots
+        for i in range(cols):
+            for j in range(row):
+                self.grid[i][j] = Spot(i, j, self.grid)
+
+        # Add neighboring
+        for i in range(cols):
+            for j in range(row):
+                self.grid[i][j].addNeighbors()
 
 
 cols = 50
-grid = [0 for i in range(cols)]
 row = 50
 openSet = []
 closedSet = []
@@ -68,15 +72,7 @@ w = 800 / cols
 h = 800 / row
 cameFrom = []
 
-# create 2d array
-for i in range(cols):
-    grid[i] = [0 for i in range(row)]
-
-# Create Spots
-for i in range(cols):
-    for j in range(row):
-        grid[i][j] = spot(i, j)
-
+grid = Grid(row, cols).grid
 
 # Set start and end node
 start = grid[12][5]
@@ -160,10 +156,6 @@ while loop:
             if event.key == pygame.K_SPACE:
                 loop = False
                 break
-
-for i in range(cols):
-    for j in range(row):
-        grid[i][j].addNeighbors(grid)
 
 def heurisitic(n, e):
     d = math.sqrt((n.i - e.i)**2 + (n.j - e.j)**2)
