@@ -6,7 +6,22 @@ from tkinter import ttk
 from tkinter import messagebox
 import os
 
-screen = pygame.display.set_mode((800, 800))
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 800
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+cols = 50
+row = 50
+openSet = []
+closedSet = []
+PINK = (255, 8, 127)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+GREY = (220, 220, 220)
+WHITE = (255, 255, 255)
+w = SCREEN_WIDTH / cols
+h = SCREEN_HEIGHT / row
+cameFrom = []
 
 class Spot:
     def __init__(self, x, y, grid):
@@ -54,38 +69,27 @@ class Grid:
             for j in range(row):
                 self.grid[i][j].addNeighbors()
 
+        # Default coloring
+        for i in range(cols):
+            for j in range(row):
+                self.grid[i][j].show(WHITE, 1)
 
-cols = 50
-row = 50
-openSet = []
-closedSet = []
-red = (255, 0, 0)
-green = (0, 255, 0)
-blue = (0, 0, 255)
-grey = (220, 220, 220)
-w = 800 / cols
-h = 800 / row
-cameFrom = []
+        for i in range(0,row):
+            self.grid[0][i].show(GREY, 0)
+            self.grid[0][i].obs = True
+            self.grid[cols-1][i].obs = True
+            self.grid[cols-1][i].show(GREY, 0)
+            self.grid[i][row-1].show(GREY, 0)
+            self.grid[i][0].show(GREY, 0)
+            self.grid[i][0].obs = True
+            self.grid[i][row-1].obs = True
+
 
 grid = Grid(row, cols).grid
 
-# Set start and end node
+# Set default start and end node
 start = grid[12][5]
 end = grid[3][6]
-# SHOW RECT
-for i in range(cols):
-    for j in range(row):
-        grid[i][j].show((255, 255, 255), 1)
-
-for i in range(0,row):
-    grid[0][i].show(grey, 0)
-    grid[0][i].obs = True
-    grid[cols-1][i].obs = True
-    grid[cols-1][i].show(grey, 0)
-    grid[i][row-1].show(grey, 0)
-    grid[i][0].show(grey, 0)
-    grid[i][0].obs = True
-    grid[i][row-1].obs = True
 
 pygame.display.update()
 
@@ -99,10 +103,11 @@ def onsubmit():
     window.quit()
     window.destroy()
 
+# asking for custom start and end node
 window = Tk()
-label = Label(window, text='Start(x,y): ')
+label_start_node = Label(window, text='Start(x,y): ')
 startBox = Entry(window)
-label1 = Label(window, text='End(x,y): ')
+label_end_node = Label(window, text='End(x,y): ')
 endBox = Entry(window)
 var = IntVar()
 showPath = ttk.Checkbutton(window, text='Show Steps :', onvalue=1, offvalue=0, variable=var)
@@ -111,10 +116,10 @@ submit = Button(window, text='Submit', command=onsubmit)
 
 showPath.grid(columnspan=2, row=2)
 submit.grid(columnspan=2, row=3)
-label1.grid(row=1, pady=3)
+label_end_node.grid(row=1, pady=3)
 endBox.grid(row=1, column=1, pady=3)
 startBox.grid(row=0, column=1, pady=3)
-label.grid(row=0, pady=3)
+label_start_node.grid(row=0, pady=3)
 
 window.update()
 mainloop()
@@ -125,16 +130,16 @@ openSet.append(start)
 def mousePress(x):
     t = x[0]
     w = x[1]
-    g1 = t // (800 // cols)
-    g2 = w // (800 // row)
+    g1 = t // (SCREEN_HEIGHT // cols)
+    g2 = w // (SCREEN_WIDTH // row)
     acess = grid[g1][g2]
     if acess != start and acess != end:
         if acess.obs == False:
             acess.obs = True
-            acess.show((255, 255, 255), 0)
+            acess.show(WHITE, 0)
 
-end.show((255, 8, 127), 0)
-start.show((255, 8, 127), 0)
+end.show(PINK, 0)
+start.show(PINK, 0)
 
 loop = True
 while loop:
@@ -162,8 +167,8 @@ def heurisitic(n, e):
 
 
 def main():
-    end.show((255, 8, 127), 0)
-    start.show((255, 8, 127), 0)
+    end.show(PINK, 0)
+    start.show(PINK, 0)
     if len(openSet) > 0:
         lowestIndex = 0
         for i in range(len(openSet)):
@@ -173,13 +178,13 @@ def main():
         current = openSet[lowestIndex]
         if current == end:
             print('done', current.f)
-            start.show((255,8,127),0)
+            start.show(PINK, 0)
             temp = current.f
             for i in range(round(current.f)):
                 current.closed = False
-                current.show((0,0,255), 0)
+                current.show(BLUE, 0)
                 current = current.previous
-            end.show((255, 8, 127), 0)
+            end.show(PINK, 0)
             pygame.display.update()
 
             Tk().wm_withdraw()
@@ -218,11 +223,11 @@ def main():
                 neighbor.previous = current
     if var.get():
         for i in range(len(openSet)):
-            openSet[i].show(green, 0)
+            openSet[i].show(GREEN, 0)
 
         for i in range(len(closedSet)):
             if closedSet[i] != start:
-                closedSet[i].show(red, 0)
+                closedSet[i].show(RED, 0)
         pygame.display.update()
         
     current.closed = True
