@@ -23,13 +23,8 @@ class Spot:
         self.value = 1
 
     def show(self, color, st):
-        if self.closed == False :
+        if not self.closed:
             pygame.draw.rect(screen, color, (self.i * w, self.j * h, w, h), st)
-            pygame.display.update()
-
-    def path(self, color, st):
-        pygame.draw.rect(screen, color, (self.i * w, self.j * h, w, h), st)
-        pygame.display.update()
 
     def addNeighbors(self):
         if self.i < cols-1 and not self.grid[self.i + 1][self.j].obs:
@@ -91,6 +86,8 @@ for i in range(0,row):
     grid[i][0].show(grey, 0)
     grid[i][0].obs = True
     grid[i][row-1].obs = True
+
+pygame.display.update()
 
 def onsubmit():
     global start
@@ -156,6 +153,7 @@ while loop:
             if event.key == pygame.K_SPACE:
                 loop = False
                 break
+    pygame.display.update()
 
 def heurisitic(n, e):
     d = math.sqrt((n.i - e.i)**2 + (n.j - e.j)**2)
@@ -182,6 +180,7 @@ def main():
                 current.show((0,0,255), 0)
                 current = current.previous
             end.show((255, 8, 127), 0)
+            pygame.display.update()
 
             Tk().wm_withdraw()
             result = messagebox.askokcancel('Program Finished', ('The program finished, the shortest distance \n to the path is ' + str(temp) + ' blocks away, \n would you like to re run the program?'))
@@ -224,6 +223,8 @@ def main():
         for i in range(len(closedSet)):
             if closedSet[i] != start:
                 closedSet[i].show(red, 0)
+        pygame.display.update()
+        
     current.closed = True
 
 
