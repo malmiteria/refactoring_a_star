@@ -14,7 +14,6 @@ def first_window():
         global ed
         st = [int(_) for _ in startBox.get().split(',')]
         ed = [int(_) for _ in endBox.get().split(',')]
-        print(st, ed)
         window.quit()
         window.destroy()
 

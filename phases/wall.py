@@ -1,36 +1,49 @@
 
+from contextlib import suppress
+
 import pygame
 
 from settings import *
 
-def add_walls(grid, start, end):
-    # adding wall by mouse press
-    def mousePress(x):
-        t, w = x
-        g1 = t // (SCREEN_HEIGHT // cols)
-        g2 = w // (SCREEN_WIDTH // row)
-        acess = grid[g1][g2]
-        if acess != start and acess != end:
-            if not acess.obs:
-                acess.obs = True
-                acess.show(WHITE, 0)
+class Wall:
 
-    loop = True
-    while loop:
-        ev = pygame.event.get()
+    def __init__(self, grid, start, end):
+        self.grid = grid
+        self.start = start
+        self.end = end
 
+    def key_space(self, event):
+        return event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE
+
+    def handle_all_event(self, ev):
         for event in ev:
             if event.type == pygame.QUIT:
                 pygame.quit()
             if pygame.mouse.get_pressed()[0]:
-                try:
+                with suppress(AttributeError):
                     pos = pygame.mouse.get_pos()
-                    mousePress(pos)
-                except AttributeError:
-                    pass
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    loop = False
-                    break
-        pygame.display.update()
-    # end adding wall by mouse press
+                    self.mousePress(pos)
+            elif self.key_space(event):
+                return False
+        return True
+
+    def mousePress(self, x):
+        t, w = x
+        g1 = t // (SCREEN_HEIGHT // cols)
+        g2 = w // (SCREEN_WIDTH // row)
+        acess = self.grid[g1][g2]
+        if acess != self.start and acess != self.end:
+            if not acess.obs:
+                acess.obs = True
+                acess.show(WHITE, 0)
+
+    def add_walls(self):
+        # adding wall by mouse press
+
+        while True:
+            ev = pygame.event.get()
+
+            if not self.handle_all_event(ev):
+                break
+            pygame.display.update()
+        # end adding wall by mouse press

@@ -19,19 +19,28 @@ class Spot:
         pygame.draw.rect(screen, color, (self.i * w, self.j * h, w, h), st)
 
     def addNeighbors(self):
-        if self.i < cols-1 and not self.grid[self.i + 1][self.j].obs:
-            self.add_neighbor_coo(self.i + 1)
-        self.add_neighbor_coo(self.i)
-        if self.i > 0 and not self.grid[self.i - 1][self.j].obs:
-            self.add_neighbor_coo(self.i - 1)
+        for i, j in possible_neighboring():
+            if i >= cols-1:
+                continue
+            if i <= 0:
+                continue
+            if j >= row-1:
+                continue
+            if j <= 0:
+                continue
+            if self.grid[i][j].obs:
+                continue
+            if i == self.i and j == self.j:
+                continue
+            self.add_neighbor(i, j)
 
-    def add_neighbor_coo(self, i):
-        if self.j < row-1 and not self.grid[i][self.j + 1].obs:
-            self.neighbors.append(self.grid[i][self.j + 1])
-        if i != self.i:
-            self.neighbors.append(self.grid[i][self.j])
-        if self.j > 0 and not self.grid[i][self.j - 1].obs:
-            self.neighbors.append(self.grid[i][self.j - 1])
+    def add_neighbor(self, i, j):
+        self.neighbors.append(self.grid[i][j])
+
+    def possible_neighboring(self):
+        for i in [self.i-1, self.i, self.i +1]:
+            for j in [self.j-1, self.j, self.j +1]:
+                yield i, j
 
 class Grid:
 
