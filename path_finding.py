@@ -29,15 +29,14 @@ class Spot:
     def __init__(self, x, y, grid):
         self.i = x
         self.j = y
-        self.f = 0
-        self.g = 0
-        self.h = 0
+        self.full_cost_expected = 0
+        self.cost_to_reach = 0
+        self.heuristic_cost_expected = 0
         self.neighbors = []
         self.grid = grid
         self.previous = None
         self.obs = False
         self.closed = False
-        self.value = 1
 
     def show(self, color, st):
         if not self.closed:
@@ -45,13 +44,18 @@ class Spot:
 
     def addNeighbors(self):
         if self.i < cols-1 and not self.grid[self.i + 1][self.j].obs:
-            self.neighbors.append(self.grid[self.i + 1][self.j])
+            self.add_neighbor_coo(self.i + 1)
+        self.add_neighbor_coo(self.i)
         if self.i > 0 and not self.grid[self.i - 1][self.j].obs:
-            self.neighbors.append(self.grid[self.i - 1][self.j])
-        if self.j < row-1 and not self.grid[self.i][self.j + 1].obs:
-            self.neighbors.append(self.grid[self.i][self.j + 1])
-        if self.j > 0 and not self.grid[self.i][self.j - 1].obs:
-            self.neighbors.append(self.grid[self.i][self.j - 1])
+            self.add_neighbor_coo(self.i - 1)
+
+    def add_neighbor_coo(self, i):
+        if self.j < row-1 and not self.grid[i][self.j + 1].obs:
+            self.neighbors.append(self.grid[i][self.j + 1])
+        if i != self.i:
+            self.neighbors.append(self.grid[i][self.j])
+        if self.j > 0 and not self.grid[i][self.j - 1].obs:
+            self.neighbors.append(self.grid[i][self.j - 1])
 
 class Grid:
 
@@ -94,8 +98,8 @@ grid = GRID.grid
 pygame.display.update()
 
 # Set start and end node
-st = [12, 5] # default start
-ed = [3, 6] # default end
+st = [2, 2] # default start
+ed = [45, 45] # default end
 var, st, ed = windows.first_window()
 start = grid[st[0]][st[1]]
 end = grid[ed[0]][ed[1]]
@@ -138,27 +142,29 @@ while loop:
 # add neighbor here so it take account for walls
 GRID.add_neighboring()
 
-openSet.append(start)
 
 def heurisitic(n, e):
     d = math.sqrt((n.i - e.i)**2 + (n.j - e.j)**2)
     #d = abs(n.i - e.i) + abs(n.j - e.j)
     return d
 
+start.full_cost_expected = heurisitic(start, end)
+start.heuristic_cost_expected = heurisitic(start, end)
+openSet.append(start)
 
 def main():
     end.show(PINK, 0)
     start.show(PINK, 0)
     if len(openSet) > 0:
-        fs = [spot.f for spot in openSet]
+        fs = [spot.full_cost_expected for spot in openSet]
         lowestIndex = fs.index(min(fs))
 
         current = openSet[lowestIndex]
         if current == end:
-            print('done', current.f)
+            print('done', current.full_cost_expected)
             start.show(PINK, 0)
-            temp = current.f
-            for i in range(round(current.f)):
+            temp = current.full_cost_expected
+            for i in range(round(current.full_cost_expected)):
                 current.closed = False
                 current.show(BLUE, 0)
                 current = current.previous
@@ -171,19 +177,18 @@ def main():
         openSet.pop(lowestIndex)
         closedSet.append(current)
 
-        neighbors = current.neighbors
-        for neighbor in neighbors:
+        for neighbor in current.neighbors:
             if neighbor not in closedSet:
-                tempG = current.g + current.value
+                tempG = current.cost_to_reach + heurisitic(current, neighbor)
                 if neighbor in openSet:
-                    if neighbor.g > tempG:
-                        neighbor.g = tempG
+                    if neighbor.cost_to_reach > tempG:
+                        neighbor.cost_to_reach = tempG
                 else:
-                    neighbor.g = tempG
+                    neighbor.cost_to_reach = tempG
                     openSet.append(neighbor)
 
-            neighbor.h = heurisitic(neighbor, end)
-            neighbor.f = neighbor.g + neighbor.h
+            neighbor.heuristic_cost_expected = heurisitic(neighbor, end)
+            neighbor.full_cost_expected = neighbor.cost_to_reach + neighbor.heuristic_cost_expected
 
             if neighbor.previous == None:
                 neighbor.previous = current

@@ -6,8 +6,8 @@ import pygame
 
 # First window for asking first and end node
 
-st = [12, 5] 
-ed = [3, 6]
+st = [2, 2] # default start
+ed = [45, 45] # default end
 def first_window():
     def onsubmit():
         global st
