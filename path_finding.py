@@ -40,44 +40,68 @@ start.full_cost_expected = heuristic(start, end)
 start.heuristic_cost_expected = heuristic(start, end)
 openSet.append(start)
 
+def smallest_in_cost():
+    fs = [spot.full_cost_expected for spot in openSet]
+    lowestIndex = fs.index(min(fs))
+
+    return openSet[lowestIndex]
+
+def start_to_end(current):
+    while current is not start:
+        yield current
+        current = current.previous
+
+def inner_path(current):
+    return list(start_to_end(current))[1:]
+
+def handle_all_neighbors(current):
+    for neighbor in current.neighbors:
+        handle_one_neighbor(current, neighbor)
+
+def never_reached(spot):
+    return spot not in closedSet and spot not in openSet
+
+def better_parent(spot, current_cost):
+    return spot.previous is None or spot not in closedSet and spot in openSet and spot.cost_to_reach > current_cost
+
+def is_best_cost_to_reach(spot, current_cost):
+    return spot not in closedSet and spot not in openSet or spot.cost_to_reach > current_cost
+
+def reparent_if_needed(current, spot, cost):
+    if better_parent(spot, cost):
+        spot.previous = current
+
+def update_all_cost(spot, cost):
+    if is_best_cost_to_reach(spot, cost):
+        spot.cost_to_reach = cost
+    spot.heuristic_cost_expected = heuristic(spot, end)
+    spot.full_cost_expected = spot.cost_to_reach + spot.heuristic_cost_expected
+
+def open_if_needed(spot):
+    if never_reached(spot):
+        openSet.append(spot)
+
+def handle_one_neighbor(current, neighbor):
+    tempG = current.cost_to_reach + heuristic(current, neighbor)
+    reparent_if_needed(current, neighbor, tempG)
+    update_all_cost(neighbor, tempG)
+    open_if_needed(neighbor)
+
+
 def main():
-    if len(openSet) > 0:
-        fs = [spot.full_cost_expected for spot in openSet]
-        lowestIndex = fs.index(min(fs))
+    if len(openSet) <= 0:
+        return
 
-        current = openSet[lowestIndex]
-        if current == end:
-            print('done', current.full_cost_expected)
-            total_cost = current.full_cost_expected
-            to_draw = []
-            while current is not start:
-                current.closed = False
-                to_draw.append(current)
-                current = current.previous
-            to_draw.remove(end)
-            return total_cost, to_draw
+    current = smallest_in_cost()
+    
+    if current == end:
+        print('done', current.full_cost_expected)
+        return current.full_cost_expected, inner_path(current)
 
-        openSet.remove(current)
-        closedSet.append(current)
+    openSet.remove(current)
+    closedSet.append(current)
 
-        for neighbor in current.neighbors:
-            if neighbor not in closedSet:
-                tempG = current.cost_to_reach + heuristic(current, neighbor)
-                if neighbor in openSet: # node reached
-                    if neighbor.cost_to_reach > tempG: # current way is shorter
-                        neighbor.cost_to_reach = tempG
-                        neighbor.previous = current # update parent, but don't reopen
-                else:
-                    neighbor.cost_to_reach = tempG
-                    openSet.append(neighbor)
-
-            neighbor.heuristic_cost_expected = heuristic(neighbor, end)
-            neighbor.full_cost_expected = neighbor.cost_to_reach + neighbor.heuristic_cost_expected
-
-            if neighbor.previous == None:
-                neighbor.previous = current
-        
-    current.closed = True
+    handle_all_neighbors(current)
 
 
 while True:
@@ -97,10 +121,10 @@ while True:
         windows.end_window(stopped[0])
         pygame.quit()
     if var.get():
-        for i in range(len(openSet)):
-            openSet[i].show(GREEN, 0)
+        for spot in openSet:
+            spot.show(GREEN, 0)
 
-        for i in range(len(closedSet)):
-            if closedSet[i] != start:
-                closedSet[i].show(RED, 0)
+        for spot in closedSet:
+            if spot != start:
+                spot.show(RED, 0)
 # END ACTUAL A*

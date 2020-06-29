@@ -14,11 +14,9 @@ class Spot:
         self.grid = grid
         self.previous = None
         self.obs = False
-        self.closed = False
 
     def show(self, color, st):
-        if not self.closed:
-            pygame.draw.rect(screen, color, (self.i * w, self.j * h, w, h), st)
+        pygame.draw.rect(screen, color, (self.i * w, self.j * h, w, h), st)
 
     def addNeighbors(self):
         if self.i < cols-1 and not self.grid[self.i + 1][self.j].obs:
