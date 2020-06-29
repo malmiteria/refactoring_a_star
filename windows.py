@@ -43,11 +43,3 @@ def end_window(temp):
     result = messagebox.askokcancel('Program Finished', ('The program finished, the shortest distance \n to the path is ' + str(temp) + ' blocks away, \n would you like to re run the program?'))
     if result:
         os.execl(sys.executable,sys.executable, *sys.argv)
-    else:
-        ag = True
-        while ag:
-            ev = pygame.event.get()
-            for event in ev:
-                if event.type == pygame.KEYDOWN:
-                    ag = False
-                    break
