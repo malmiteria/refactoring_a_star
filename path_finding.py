@@ -6,6 +6,8 @@ from tkinter import ttk
 from tkinter import messagebox
 import os
 
+import windows
+
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 800
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -64,11 +66,6 @@ class Grid:
             for j in range(row):
                 self.grid[i][j] = Spot(i, j, self.grid)
 
-        # Add neighboring
-        for i in range(cols):
-            for j in range(row):
-                self.grid[i][j].addNeighbors()
-
         # Default coloring
         for i in range(cols):
             for j in range(row):
@@ -84,62 +81,40 @@ class Grid:
             self.grid[i][0].obs = True
             self.grid[i][row-1].obs = True
 
+    def add_neighboring(self):
+        # Add neighboring
+        for i in range(cols):
+            for j in range(row):
+                self.grid[i][j].addNeighbors()
 
-grid = Grid(row, cols).grid
 
-# Set default start and end node
-start = grid[12][5]
-end = grid[3][6]
+GRID = Grid(row, cols)
+grid = GRID.grid
 
 pygame.display.update()
 
-def onsubmit():
-    global start
-    global end
-    st = startBox.get().split(',')
-    ed = endBox.get().split(',')
-    start = grid[int(st[0])][int(st[1])]
-    end = grid[int(ed[0])][int(ed[1])]
-    window.quit()
-    window.destroy()
-
-# asking for custom start and end node
-window = Tk()
-label_start_node = Label(window, text='Start(x,y): ')
-startBox = Entry(window)
-label_end_node = Label(window, text='End(x,y): ')
-endBox = Entry(window)
-var = IntVar()
-showPath = ttk.Checkbutton(window, text='Show Steps :', onvalue=1, offvalue=0, variable=var)
-
-submit = Button(window, text='Submit', command=onsubmit)
-
-showPath.grid(columnspan=2, row=2)
-submit.grid(columnspan=2, row=3)
-label_end_node.grid(row=1, pady=3)
-endBox.grid(row=1, column=1, pady=3)
-startBox.grid(row=0, column=1, pady=3)
-label_start_node.grid(row=0, pady=3)
-
-window.update()
-mainloop()
+# Set start and end node
+st = [12, 5] # default start
+ed = [3, 6] # default end
+var, st, ed = windows.first_window()
+start = grid[st[0]][st[1]]
+end = grid[ed[0]][ed[1]]
 
 pygame.init()
-openSet.append(start)
 
+end.show(PINK, 0)
+start.show(PINK, 0)
+
+# adding wall by mouse press
 def mousePress(x):
-    t = x[0]
-    w = x[1]
+    t, w = x
     g1 = t // (SCREEN_HEIGHT // cols)
     g2 = w // (SCREEN_WIDTH // row)
     acess = grid[g1][g2]
     if acess != start and acess != end:
-        if acess.obs == False:
+        if not acess.obs:
             acess.obs = True
             acess.show(WHITE, 0)
-
-end.show(PINK, 0)
-start.show(PINK, 0)
 
 loop = True
 while loop:
@@ -159,6 +134,11 @@ while loop:
                 loop = False
                 break
     pygame.display.update()
+# end adding wall by mouse press
+# add neighbor here so it take account for walls
+GRID.add_neighboring()
+
+openSet.append(start)
 
 def heurisitic(n, e):
     d = math.sqrt((n.i - e.i)**2 + (n.j - e.j)**2)
@@ -170,10 +150,8 @@ def main():
     end.show(PINK, 0)
     start.show(PINK, 0)
     if len(openSet) > 0:
-        lowestIndex = 0
-        for i in range(len(openSet)):
-            if openSet[i].f < openSet[lowestIndex].f:
-                lowestIndex = i
+        fs = [spot.f for spot in openSet]
+        lowestIndex = fs.index(min(fs))
 
         current = openSet[lowestIndex]
         if current == end:
