@@ -1,6 +1,8 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
+import os
+import pygame
 
 # First window for asking first and end node
 
@@ -35,3 +37,17 @@ def first_window():
     window.update()
     mainloop()
     return var, st, ed
+
+def end_window(temp):
+    Tk().wm_withdraw()
+    result = messagebox.askokcancel('Program Finished', ('The program finished, the shortest distance \n to the path is ' + str(temp) + ' blocks away, \n would you like to re run the program?'))
+    if result:
+        os.execl(sys.executable,sys.executable, *sys.argv)
+    else:
+        ag = True
+        while ag:
+            ev = pygame.event.get()
+            for event in ev:
+                if event.type == pygame.KEYDOWN:
+                    ag = False
+                    break
