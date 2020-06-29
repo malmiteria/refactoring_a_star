@@ -11,6 +11,7 @@ class Wall:
         self.grid = grid
         self.start = start
         self.end = end
+        self.wall_spots = []
 
     def key_space(self, event):
         return event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE
@@ -35,7 +36,7 @@ class Wall:
         if acess != self.start and acess != self.end:
             if not acess.obs:
                 acess.obs = True
-                acess.show(WHITE, 0)
+                self.wall_spots.append(acess)
 
     def add_walls(self):
         # adding wall by mouse press
@@ -45,5 +46,7 @@ class Wall:
 
             if not self.handle_all_event(ev):
                 break
+            for spot in self.wall_spots:
+                spot.show(WHITE, 0)
             pygame.display.update()
         # end adding wall by mouse press
