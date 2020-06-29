@@ -5,6 +5,7 @@ from settings import *
 from models import Grid
 import phases.wall
 import phases.a_star
+from colors import color_empty_grid, color_start_and_end, color_final_path, color_open_and_closed
 
 # SETUP GRID
 pygame.init()
@@ -13,6 +14,8 @@ pygame.init()
 GRID = Grid(row, cols)
 grid = GRID.grid
 
+color_empty_grid(GRID)
+
 pygame.display.update()
 
 # Set start and end node
@@ -20,8 +23,7 @@ var, st, ed = windows.first_window()
 start = grid[st[0]][st[1]]
 end = grid[ed[0]][ed[1]]
 
-start.show(PINK, 0)
-end.show(PINK, 0)
+color_start_and_end(start, end)
 
 # add walls
 wall = phases.wall.Wall(grid, start, end)
@@ -42,21 +44,16 @@ while True:
         pygame.quit()
     pygame.display.update()
 
-    end.show(PINK, 0)
-    start.show(PINK, 0)
+    color_start_and_end(start, end)
+
     stopped = a_star.main()
     if stopped:
-        for spot in stopped[1]:
-            spot.show(BLUE, 0)
+        color_final_path(stopped[1])
         pygame.display.update()
 
         windows.end_window(stopped[0])
+
         pygame.quit()
     if var.get():
-        for spot in a_star.openSet:
-            spot.show(GREEN, 0)
-
-        for spot in a_star.closedSet:
-            if spot != start:
-                spot.show(RED, 0)
+        color_open_and_closed(a_star.openSet, a_star.closedSet, start)
 # END ACTUAL A*

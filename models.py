@@ -1,22 +1,21 @@
 
 import pygame
 
-from settings import *
+from settings import h, w, screen
 
 class Spot:
-    def __init__(self, x, y, grid):
+    def __init__(self, x, y, grid_model):
         self.i = x
         self.j = y
         self.full_cost_expected = 0
         self.cost_to_reach = 0
         self.heuristic_cost_expected = 0
         self.neighbors = []
-        self.grid = grid
+        self.grid = grid_model.grid
+        self.cols = grid_model.cols
+        self.row = grid_model.row
         self.previous = None
         self.obs = False
-
-    def show(self, color, st):
-        pygame.draw.rect(screen, color, (self.i * w, self.j * h, w, h), st)
 
     def addNeighbors(self):
         for i, j in self.accessible_neighboring():
@@ -34,11 +33,11 @@ class Spot:
         for i, j in self.possible_neighboring():
             if i == self.i and j == self.j:
                 continue
-            if i >= cols-1:
+            if i >= self.cols-1:
                 continue
             if i <= 0:
                 continue
-            if j >= row-1:
+            if j >= self.row-1:
                 continue
             if j <= 0:
                 continue
@@ -54,6 +53,9 @@ class Spot:
 class Grid:
 
     def __init__(self, row, cols):
+        self.row = row
+        self.cols = cols
+
         self.grid = [None] * cols
         # create 2d array
         for i in range(cols):
@@ -62,27 +64,32 @@ class Grid:
         # Create Spots
         for i in range(cols):
             for j in range(row):
-                self.grid[i][j] = Spot(i, j, self.grid)
-
-        # Default coloring
-        for i in range(cols):
-            for j in range(row):
-                self.grid[i][j].show(WHITE, 1)
+                self.grid[i][j] = Spot(i, j, self)
 
         for i in range(0,row):
-            self.grid[0][i].show(GREY, 0)
             self.grid[0][i].obs = True
             self.grid[cols-1][i].obs = True
-            self.grid[cols-1][i].show(GREY, 0)
-            self.grid[i][row-1].show(GREY, 0)
-            self.grid[i][0].show(GREY, 0)
             self.grid[i][0].obs = True
             self.grid[i][row-1].obs = True
 
+    def all_spots(self):
+        for column in self.grid:
+            for spot in column:
+                yield spot
+
+    def obstructed_spots(self):
+        for spot in self.all_spots():
+            if not spot.obs:
+                continue
+            yield spot
+
+    def not_obstructed_spots(self):
+        for spot in self.all_spots():
+            if spot.obs:
+                continue
+            yield spot
+
     def add_neighboring(self):
         # Add neighboring
-        for i in range(cols):
-            for j in range(row):
-                self.grid[i][j].addNeighbors()
-
-
+        for spot in self.all_spots():
+            spot.addNeighbors()

@@ -4,6 +4,7 @@ from contextlib import suppress
 import pygame
 
 from settings import *
+from colors import color_walls
 
 class Wall:
 
@@ -46,7 +47,6 @@ class Wall:
 
             if not self.handle_all_event(ev):
                 break
-            for spot in self.wall_spots:
-                spot.show(WHITE, 0)
+            color_walls(self.wall_spots)
             pygame.display.update()
         # end adding wall by mouse press
