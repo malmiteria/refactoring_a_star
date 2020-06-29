@@ -41,8 +41,6 @@ start.heuristic_cost_expected = heuristic(start, end)
 openSet.append(start)
 
 def main():
-    end.show(PINK, 0)
-    start.show(PINK, 0)
     if len(openSet) > 0:
         fs = [spot.full_cost_expected for spot in openSet]
         lowestIndex = fs.index(min(fs))
@@ -50,16 +48,16 @@ def main():
         current = openSet[lowestIndex]
         if current == end:
             print('done', current.full_cost_expected)
-            temp = current.full_cost_expected
-            for i in range(round(current.full_cost_expected)):
+            total_cost = current.full_cost_expected
+            to_draw = []
+            while current is not start:
                 current.closed = False
-                current.show(BLUE, 0)
+                to_draw.append(current)
                 current = current.previous
-            start.show(PINK, 0)
-            end.show(PINK, 0)
-            return temp
+            to_draw.remove(end)
+            return total_cost, to_draw
 
-        openSet.pop(lowestIndex)
+        openSet.remove(current)
         closedSet.append(current)
 
         for neighbor in current.neighbors:
@@ -78,13 +76,6 @@ def main():
 
             if neighbor.previous == None:
                 neighbor.previous = current
-    if var.get():
-        for i in range(len(openSet)):
-            openSet[i].show(GREEN, 0)
-
-        for i in range(len(closedSet)):
-            if closedSet[i] != start:
-                closedSet[i].show(RED, 0)
         
     current.closed = True
 
@@ -94,11 +85,22 @@ while True:
     if ev.type == pygame.QUIT:
         pygame.quit()
     pygame.display.update()
-    full_cost = main()
-    if full_cost:
+
+    end.show(PINK, 0)
+    start.show(PINK, 0)
+    stopped = main()
+    if stopped:
+        for spot in stopped[1]:
+            spot.show(BLUE, 0)
         pygame.display.update()
 
-        windows.end_window(full_cost)
+        windows.end_window(stopped[0])
         pygame.quit()
+    if var.get():
+        for i in range(len(openSet)):
+            openSet[i].show(GREEN, 0)
 
+        for i in range(len(closedSet)):
+            if closedSet[i] != start:
+                closedSet[i].show(RED, 0)
 # END ACTUAL A*
