@@ -50,17 +50,14 @@ def main():
         current = openSet[lowestIndex]
         if current == end:
             print('done', current.full_cost_expected)
-            start.show(PINK, 0)
             temp = current.full_cost_expected
             for i in range(round(current.full_cost_expected)):
                 current.closed = False
                 current.show(BLUE, 0)
                 current = current.previous
+            start.show(PINK, 0)
             end.show(PINK, 0)
-            pygame.display.update()
-
-            windows.end_window(temp)
-            pygame.quit()
+            return temp
 
         openSet.pop(lowestIndex)
         closedSet.append(current)
@@ -97,6 +94,11 @@ while True:
     if ev.type == pygame.QUIT:
         pygame.quit()
     pygame.display.update()
-    main()
+    full_cost = main()
+    if full_cost:
+        pygame.display.update()
+
+        windows.end_window(full_cost)
+        pygame.quit()
 
 # END ACTUAL A*
