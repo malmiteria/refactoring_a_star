@@ -3,15 +3,15 @@ from contextlib import suppress
 
 import pygame
 
-from settings import *
+from settings import SCREEN_WIDTH, SCREEN_HEIGHT, cols, row
 from colors import color_walls
 
 class Wall:
 
-    def __init__(self, grid, start, end):
-        self.grid = grid
-        self.start = start
-        self.end = end
+    def __init__(self, grid_model):
+        self.grid = grid_model.grid
+        self.start = grid_model.start
+        self.end = grid_model.end
         self.wall_spots = []
 
     def key_space(self, event):

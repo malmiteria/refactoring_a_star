@@ -2,11 +2,13 @@ import math
 
 class AStar:
 
-    def __init__(self, start, end):
-        self.start = start
-        self.end = end
+    def __init__(self, grid):
+        self.start = grid.start
+        self.end = grid.end
         self.openSet = []
         self.closedSet = []
+        self.update_all_cost(self.start, 0)
+        self.openSet.append(self.start)
 
     def heuristic(self, n, e):
         return math.sqrt((n.i - e.i)**2 + (n.j - e.j)**2)

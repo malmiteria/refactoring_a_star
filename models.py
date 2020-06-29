@@ -93,3 +93,9 @@ class Grid:
         # Add neighboring
         for spot in self.all_spots():
             spot.addNeighbors()
+
+    def set_start(self, x, y):
+        self.start = self.grid[x][y]
+
+    def set_end(self, x, y):
+        self.end = self.grid[x][y]

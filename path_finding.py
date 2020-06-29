@@ -5,38 +5,45 @@ from settings import *
 from models import Grid
 import phases.wall
 import phases.a_star
-from colors import color_empty_grid, color_start_and_end, color_final_path, color_open_and_closed
+from colors import ColorAStar, ColorGrid
+
+
+def init_grid():
+    GRID = Grid(row, cols)
+
+    grid_color = ColorGrid(GRID)
+    grid_color.color_empty_grid()
+
+    pygame.display.update()
+    return GRID, grid_color
+
+def choose_start_and_end():
+    var, st, ed = windows.first_window()
+    GRID.set_start(*st)
+    GRID.set_end(*ed)
+
+    grid_color.color_start_and_end()
+    return var
+
+def add_walls(GRID):
+    wall = phases.wall.Wall(GRID)
+    wall.add_walls()
 
 # SETUP GRID
 pygame.init()
-
 # construct game grid
-GRID = Grid(row, cols)
-grid = GRID.grid
-
-color_empty_grid(GRID)
-
-pygame.display.update()
-
+GRID, grid_color = init_grid()
 # Set start and end node
-var, st, ed = windows.first_window()
-start = grid[st[0]][st[1]]
-end = grid[ed[0]][ed[1]]
-
-color_start_and_end(start, end)
-
+var = choose_start_and_end()
 # add walls
-wall = phases.wall.Wall(grid, start, end)
-wall.add_walls()
-
+add_walls(GRID)
 # add neighbor here so it take account for walls
 GRID.add_neighboring()
 # END SETUP GRID
 
 # ACTUAL A*
-a_star = phases.a_star.AStar(start, end)
-a_star.update_all_cost(start, 0)
-a_star.openSet.append(start)
+a_star = phases.a_star.AStar(GRID)
+a_star_color = ColorAStar(GRID, a_star)
 
 while True:
     ev = pygame.event.poll()
@@ -44,16 +51,16 @@ while True:
         pygame.quit()
     pygame.display.update()
 
-    color_start_and_end(start, end)
+    grid_color.color_start_and_end()
 
     stopped = a_star.main()
     if stopped:
-        color_final_path(stopped[1])
+        a_star_color.color_final_path(stopped[1])
         pygame.display.update()
 
         windows.end_window(stopped[0])
 
         pygame.quit()
     if var.get():
-        color_open_and_closed(a_star.openSet, a_star.closedSet, start)
+        a_star_color.color_open_and_closed()
 # END ACTUAL A*
