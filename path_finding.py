@@ -7,11 +7,11 @@ from colors import ColorAStar
 from game_stages.setup_and_wall import SetupAndWall
 
 pygame.init()
-saw = SetupAndWall(row, cols)
+grid_controller = SetupAndWall(row, cols)
 
 # ACTUAL A*
-a_star = phases.a_star.AStar(saw.grid)
-a_star_color = ColorAStar(saw.grid, a_star)
+a_star = phases.a_star.AStar(grid_controller.grid)
+a_star_color = ColorAStar(a_star)
 
 while True:
     ev = pygame.event.poll()
@@ -19,7 +19,7 @@ while True:
         pygame.quit()
     pygame.display.update()
 
-    saw.grid_color.color_start_and_end()
+    grid_controller.grid_color.color_start_and_end()
 
     stopped = a_star.main()
     if stopped:
@@ -29,6 +29,6 @@ while True:
         windows.end_window(stopped[0])
 
         pygame.quit()
-    if saw.var.get():
+    if grid_controller.var.get():
         a_star_color.color_open_and_closed()
 # END ACTUAL A*

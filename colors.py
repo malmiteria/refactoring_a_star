@@ -29,8 +29,7 @@ class ColorGrid:
 
 class ColorAStar:
 
-    def __init__(self, grid, a_star):
-        self.grid = grid
+    def __init__(self, a_star):
         self.a_star = a_star
 
     def color_final_path(self, spots):
@@ -42,5 +41,5 @@ class ColorAStar:
             show(spot, GREEN, 0)
 
         for spot in self.a_star.closedSet:
-            if spot != self.grid.start:
+            if spot != self.a_star.start:
                 show(spot, RED, 0)
