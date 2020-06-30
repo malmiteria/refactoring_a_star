@@ -19,9 +19,11 @@ def first_window():
 
     window = Tk()
     label_start_node = Label(window, text='Start(x,y): ')
-    startBox = Entry(window)
+    start_placeholder = StringVar(window, value=",".join([str(_) for _ in st]))
+    startBox = Entry(window, textvariable=start_placeholder)
     label_end_node = Label(window, text='End(x,y): ')
-    endBox = Entry(window)
+    end_placeholder = StringVar(window, value=",".join([str(_) for _ in ed]))
+    endBox = Entry(window, textvariable=end_placeholder)
     var = IntVar()
     showPath = ttk.Checkbutton(window, text='Show Steps :', onvalue=1, offvalue=0, variable=var)
     submit = Button(window, text='Submit', command=onsubmit)

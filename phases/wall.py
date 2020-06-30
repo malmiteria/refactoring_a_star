@@ -35,8 +35,8 @@ class Wall:
         g2 = w // (SCREEN_WIDTH // row)
         acess = self.grid[g1][g2]
         if acess != self.start and acess != self.end:
-            if not acess.obs:
-                acess.obs = True
+            if not acess.obstructed:
+                acess.obstructed = True
                 self.wall_spots.append(acess)
 
     def add_walls(self):
