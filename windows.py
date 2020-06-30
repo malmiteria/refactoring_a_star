@@ -7,7 +7,9 @@ import pygame
 # First window for asking first and end node
 
 st = [2, 2] # default start
+stringed_st = ",".join([str(_) for _ in st])
 ed = [45, 45] # default end
+stringed_ed = ",".join([str(_) for _ in ed])
 def first_window():
     def onsubmit():
         global st
@@ -18,12 +20,15 @@ def first_window():
         window.destroy()
 
     window = Tk()
+
     label_start_node = Label(window, text='Start(x,y): ')
-    start_placeholder = StringVar(window, value=",".join([str(_) for _ in st]))
+    start_placeholder = StringVar(window, value=stringed_st)
     startBox = Entry(window, textvariable=start_placeholder)
+
     label_end_node = Label(window, text='End(x,y): ')
-    end_placeholder = StringVar(window, value=",".join([str(_) for _ in ed]))
+    end_placeholder = StringVar(window, value=stringed_ed)
     endBox = Entry(window, textvariable=end_placeholder)
+
     var = IntVar()
     showPath = ttk.Checkbutton(window, text='Show Steps :', onvalue=1, offvalue=0, variable=var)
     submit = Button(window, text='Submit', command=onsubmit)

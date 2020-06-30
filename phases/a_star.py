@@ -10,13 +10,12 @@ class AStar:
         self.update_all_cost(self.start, 0)
         self.openSet.append(self.start)
 
-    def heuristic(self, n, e):
+    def heuristic(self, n, e): # Estimated cost between 2 nodes (accurate when they're neighbor)
         return math.sqrt((n.i - e.i)**2 + (n.j - e.j)**2)
 
-    def smallest_in_cost(self):
+    def smallest_in_cost(self): # used to determine next node to pick
         fs = [spot.full_cost_expected for spot in self.openSet]
         lowestIndex = fs.index(min(fs))
-
         return self.openSet[lowestIndex]
 
     def start_to_end(self, current):
@@ -24,13 +23,14 @@ class AStar:
             yield current
             current = current.previous
 
-    def inner_path(self, current):
+    def inner_path(self, current): # build path between current and start, excluding start
         return list(self.start_to_end(current))[1:]
 
     def handle_all_neighbors(self, current):
         for neighbor in current.neighbors:
             self.handle_one_neighbor(current, neighbor)
 
+    # HANDLE ONE NEIGHBOR
     def better_parent(self, spot, current_cost):
         return spot.previous is None or \
             spot not in self.closedSet and \
@@ -65,6 +65,7 @@ class AStar:
         self.reparent_if_needed(current, neighbor, tempG)
         self.update_all_cost(neighbor, tempG)
         self.open_if_needed(neighbor)
+    # END HANDLE ONE NEIGHBOR
 
     def main(self):
         if len(self.openSet) <= 0:
