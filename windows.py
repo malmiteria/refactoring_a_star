@@ -6,31 +6,25 @@ import pygame
 
 # First window for asking first and end node
 
-st = [2, 2] # default start
-stringed_st = ",".join([str(_) for _ in st])
-ed = [45, 45] # default end
-stringed_ed = ",".join([str(_) for _ in ed])
-def first_window():
+def first_window(grid):
     def onsubmit():
-        global st
-        global ed
-        st = [int(_) for _ in startBox.get().split(',')]
-        ed = [int(_) for _ in endBox.get().split(',')]
+        grid.set_start(*[int(_) for _ in startBox.get().split(',')])
+        grid.set_end(*[int(_) for _ in endBox.get().split(',')])
         window.quit()
         window.destroy()
 
     window = Tk()
 
     label_start_node = Label(window, text='Start(x,y): ')
-    start_placeholder = StringVar(window, value=stringed_st)
+    start_placeholder = StringVar(window, value="2,2")
     startBox = Entry(window, textvariable=start_placeholder)
 
     label_end_node = Label(window, text='End(x,y): ')
-    end_placeholder = StringVar(window, value=stringed_ed)
+    end_placeholder = StringVar(window, value="45,45")
     endBox = Entry(window, textvariable=end_placeholder)
 
-    var = IntVar()
-    showPath = ttk.Checkbutton(window, text='Show Steps :', onvalue=1, offvalue=0, variable=var)
+    showStepInt = IntVar()
+    showPath = ttk.Checkbutton(window, text='Show Steps :', onvalue=1, offvalue=0, variable=showStepInt)
     submit = Button(window, text='Submit', command=onsubmit)
 
     label_start_node.grid(row=0, pady=3)
@@ -42,7 +36,7 @@ def first_window():
 
     window.update()
     mainloop()
-    return var, st, ed
+    return showStepInt
 
 def end_window(temp):
     Tk().wm_withdraw()

@@ -28,6 +28,6 @@ while True:
         windows.end_window(stopped[0])
 
         pygame.quit()
-    if grid_controller.var.get():
+    if grid_controller.color_steps.get():
         a_star_color.color_open_and_closed()
 # END ACTUAL A*

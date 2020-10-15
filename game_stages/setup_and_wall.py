@@ -21,14 +21,10 @@ class SetupAndWall:
     def init_grid(self):
         self.grid = Grid()
         self.grid_color = ColorGrid(self.grid)
-
         pygame.display.update()
 
     def choose_start_and_end(self):
-        self.var, st, ed = windows.first_window()
-        self.grid.set_start(*st)
-        self.grid.set_end(*ed)
-
+        self.color_steps = windows.first_window(self.grid)
         self.grid_color.color_start_and_end()
 
     def add_walls(self):
