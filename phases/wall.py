@@ -3,7 +3,7 @@ from contextlib import suppress
 
 import pygame
 
-from settings import SCREEN_WIDTH, SCREEN_HEIGHT, cols, row
+from settings import SCREEN_WIDTH, SCREEN_HEIGHT, COLS, ROW
 from colors import color_walls
 
 class Wall:
@@ -31,8 +31,8 @@ class Wall:
 
     def mousePress(self, x):
         t, w = x
-        g1 = t // (SCREEN_HEIGHT // cols)
-        g2 = w // (SCREEN_WIDTH // row)
+        g1 = t // (SCREEN_HEIGHT // COLS)
+        g2 = w // (SCREEN_WIDTH // ROW)
         acess = self.grid[g1][g2]
         if acess != self.start and acess != self.end:
             if not acess.obstructed:

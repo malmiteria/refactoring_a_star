@@ -14,6 +14,7 @@ class ColorGrid:
 
     def __init__(self, grid):
         self.grid = grid
+        self.color_empty_grid()
 
     def color_empty_grid(self):
         # Default coloring

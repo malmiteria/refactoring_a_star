@@ -2,14 +2,13 @@
 import pygame
 
 import windows
-from settings import *
 from models import Grid
 import phases.wall
 from colors import ColorGrid
 
 class SetupAndWall:
 
-    def __init__(self, row, cols):
+    def __init__(self):
         # construct game grid
         self.init_grid()
         # Set start and end node
@@ -20,10 +19,8 @@ class SetupAndWall:
         self.grid.add_neighboring()
 
     def init_grid(self):
-        self.grid = Grid(row, cols)
-
+        self.grid = Grid()
         self.grid_color = ColorGrid(self.grid)
-        self.grid_color.color_empty_grid()
 
         pygame.display.update()
 

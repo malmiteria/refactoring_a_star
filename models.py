@@ -1,7 +1,7 @@
 
 import pygame
 
-from settings import h, w, screen
+from settings import ROW, COLS, h, w, screen
 
 class Spot:
     def __init__(self, x, y, grid_model):
@@ -50,13 +50,13 @@ class Spot:
             yield i, j
 
 
-class Grid:
+class Grid(object):
 
-    def __init__(self, row, cols):
-        self.row = row
-        self.cols = cols
+    def __init__(self):
+        self.row = ROW
+        self.cols = COLS
 
-        self.grid = [[Spot(i, j, self) for j in range(row)] for i in range(cols)]
+        self.grid = [[Spot(i, j, self) for j in range(self.row)] for i in range(self.cols)]
 
         for spot in self.outer_ring_spots():
             spot.obstructed = True

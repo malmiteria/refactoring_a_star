@@ -1,13 +1,12 @@
 import pygame
 
 import windows
-from settings import *
 import phases.a_star
 from colors import ColorAStar
 from game_stages.setup_and_wall import SetupAndWall
 
 pygame.init()
-grid_controller = SetupAndWall(row, cols)
+grid_controller = SetupAndWall()
 
 # ACTUAL A*
 a_star = phases.a_star.AStar(grid_controller.grid)
