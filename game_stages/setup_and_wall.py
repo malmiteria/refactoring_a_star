@@ -24,7 +24,3 @@ class SetupAndWall:
         # add walls
         wall = phases.wall.Wall(self.grid)
         wall.add_walls()
-
-        # add neighbor here so it take account for walls
-        self.grid.add_neighboring()
-
