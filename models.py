@@ -1,7 +1,7 @@
 
 import pygame
 
-from settings import ROW, COLS, h, w, screen
+from settings import SCREEN_WIDTH, SCREEN_HEIGHT, ROW, COLS, h, w, screen
 
 class Spot:
     def __init__(self, x, y, grid_model):
@@ -97,3 +97,15 @@ class Grid(object):
 
     def set_end(self, x, y):
         self.end = self.grid[x][y]
+
+    def spot_from_coordinates(self, x, y):
+        g1 = x // (SCREEN_HEIGHT // COLS)
+        g2 = y // (SCREEN_WIDTH // ROW)
+        return self.grid[g1][g2]
+
+    def spot_can_be_a_wall(self, spot):
+        return spot != self.start and spot != self.end and not spot.obstructed
+
+    def turn_spot_to_wall_if_possible(self, spot):
+        if self.spot_can_be_a_wall(spot):
+            spot.obstructed = True
