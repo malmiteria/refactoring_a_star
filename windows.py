@@ -23,8 +23,8 @@ def first_window(grid):
     end_placeholder = StringVar(window, value="45,45")
     endBox = Entry(window, textvariable=end_placeholder)
 
-    showStepInt = IntVar()
-    showPath = ttk.Checkbutton(window, text='Show Steps :', onvalue=1, offvalue=0, variable=showStepInt)
+    showStep = IntVar()
+    showPath = ttk.Checkbutton(window, text='Show Steps :', onvalue=1, offvalue=0, variable=showStep)
     submit = Button(window, text='Submit', command=onsubmit)
 
     label_start_node.grid(row=0, pady=3)
@@ -36,7 +36,7 @@ def first_window(grid):
 
     window.update()
     mainloop()
-    return showStepInt
+    return showStep
 
 def end_window(temp):
     Tk().wm_withdraw()
