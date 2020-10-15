@@ -11,9 +11,7 @@ class Spot:
         self.cost_to_reach = 0
         self.heuristic_cost_expected = 0
         self.neighbors = []
-        self.grid_model = grid_model
-        self.cols = grid_model.cols
-        self.row = grid_model.row
+        self.grid = grid_model
         self.previous = None
         self.obstructed = False
 
@@ -22,7 +20,7 @@ class Spot:
             self.add_neighbor(i, j)
 
     def add_neighbor(self, i, j):
-        self.neighbors.append(self.grid_model.grid[i][j])
+        self.neighbors.append(self.grid.spot_at(i, j))
 
     def possible_neighboring(self):
         for i in [self.i-1, self.i, self.i +1]:
@@ -33,11 +31,11 @@ class Spot:
         for i, j in self.possible_neighboring():
             if i == self.i and j == self.j:
                 continue
-            if i >= self.cols-1:
+            if i >= self.grid.cols-1:
                 continue
             if i <= 0:
                 continue
-            if j >= self.row-1:
+            if j >= self.grid.row-1:
                 continue
             if j <= 0:
                 continue
@@ -45,7 +43,7 @@ class Spot:
 
     def accessible_neighboring(self):
         for i, j in self.in_map_neighboring():
-            if self.grid_model.grid[i][j].obstructed:
+            if self.grid.spot_at(i, j).obstructed:
                 continue
             yield i, j
 
@@ -60,6 +58,9 @@ class Grid(object):
 
         for spot in self.outer_ring_spots():
             spot.obstructed = True
+
+    def spot_at(self, i, j):
+        return self.grid[i][j]
 
     def outer_ring_spots(self):
         for spot in self.grid[0]:
