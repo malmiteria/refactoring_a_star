@@ -38,35 +38,18 @@ class AStar:
         self.open_if_needed(neighbor)
 
     def reparent_if_needed(self, current, spot, cost):
-        if self.better_parent(spot, cost):
+        if spot.better_parent(self, cost):
             spot.previous = current
 
     def update_all_cost(self, spot, cost):
-        if self.is_new_or_cost_lower(spot, cost):
+        if spot.is_new_or_cost_lower(self, cost):
             spot.cost_to_reach = cost
         spot.heuristic_cost_expected = self.heuristic(spot, self.end)
         spot.full_cost_expected = spot.cost_to_reach + spot.heuristic_cost_expected
 
     def open_if_needed(self, spot):
-        if self.not_seen_yet(spot):
+        if spot.not_seen_yet(self):
             self.openSet.append(spot)
-
-    def is_opened(self, spot):
-        return spot not in self.closedSet and \
-            spot in self.openSet
-
-    def not_seen_yet(self, spot):
-        return spot not in self.closedSet and \
-            spot not in self.openSet
-
-    def better_parent(self, spot, cost):
-        return spot.previous is None or \
-            self.is_opened(spot) and \
-            spot.cost_to_reach > cost
-
-    def is_new_or_cost_lower(self, spot, cost):
-        return self.not_seen_yet(spot) or \
-            spot.cost_to_reach > cost
     # END HANDLE ONE NEIGHBOR
 
     def step(self):

@@ -4,13 +4,13 @@ import pygame
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT, ROW, COLS, h, w, screen
 
 class Spot:
-    def __init__(self, x, y, grid_model):
+    def __init__(self, x, y, grid):
         self.i = x
         self.j = y
         self.full_cost_expected = 0
         self.cost_to_reach = 0
         self.heuristic_cost_expected = 0
-        self.grid = grid_model
+        self.grid = grid
         self.previous = None
         self.obstructed = False
 
@@ -39,6 +39,24 @@ class Spot:
             if spot.obstructed:
                 continue
             yield spot
+
+    # state in a_star 
+    def is_opened(self, a_star):
+        return self not in a_star.closedSet and \
+            self in a_star.openSet
+
+    def not_seen_yet(self, a_star):
+        return self not in a_star.closedSet and \
+            self not in a_star.openSet
+
+    def better_parent(self, a_star, cost):
+        return self.previous is None or \
+            self.is_opened(a_star) and \
+            self.cost_to_reach > cost
+
+    def is_new_or_cost_lower(self, a_star, cost):
+        return self.not_seen_yet(a_star) or \
+            self.cost_to_reach > cost
 
 
 class Grid(object):
