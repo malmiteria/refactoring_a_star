@@ -14,8 +14,8 @@ class AStar:
         return math.sqrt((n.i - e.i)**2 + (n.j - e.j)**2)
 
     def smallest_in_cost(self): # used to determine next node to pick
-        fs = [spot.full_cost_expected for spot in self.openSet]
-        lowestIndex = fs.index(min(fs))
+        spots_cost = [spot.full_cost_expected for spot in self.openSet]
+        lowestIndex = spots_cost.index(min(spots_cost))
         return self.openSet[lowestIndex]
 
     def start_to_end(self, current):
@@ -69,7 +69,7 @@ class AStar:
             spot.cost_to_reach > cost
     # END HANDLE ONE NEIGHBOR
 
-    def main(self):
+    def step(self):
         if len(self.openSet) <= 0:
             return
 

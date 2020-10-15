@@ -21,7 +21,7 @@ while True:
 
     grid_controller.grid_color.color_start_and_end()
 
-    stopped = a_star.main()
+    stopped = a_star.step()
     if stopped:
         a_star_color.color_final_path(stopped[1])
         pygame.display.update()
