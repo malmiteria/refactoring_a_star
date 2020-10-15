@@ -7,6 +7,7 @@ from game_stages.setup_and_wall import SetupAndWall
 
 pygame.init()
 grid_controller = SetupAndWall()
+grid_controller.run()
 
 # ACTUAL A*
 a_star = phases.a_star.AStar(grid_controller.grid)

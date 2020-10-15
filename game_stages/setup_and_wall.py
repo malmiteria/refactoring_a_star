@@ -9,25 +9,22 @@ from colors import ColorGrid
 class SetupAndWall:
 
     def __init__(self):
-        # construct game grid
-        self.init_grid()
-        # Set start and end node
-        self.choose_start_and_end()
-        # add walls
-        self.add_walls()
-        # add neighbor here so it take account for walls
-        self.grid.add_neighboring()
-
-    def init_grid(self):
         self.grid = Grid()
         self.grid_color = ColorGrid(self.grid)
+
+    def run(self):
+        # render colored empty map before asking where to put start and stop.
+        self.grid_color.color_empty_grid()
         pygame.display.update()
 
-    def choose_start_and_end(self):
+        # Set start and stop node using windows to ask user.
         self.color_steps = windows.first_window(self.grid)
         self.grid_color.color_start_and_end()
 
-    def add_walls(self):
+        # add walls
         wall = phases.wall.Wall(self.grid)
         wall.add_walls()
+
+        # add neighbor here so it take account for walls
+        self.grid.add_neighboring()
 
