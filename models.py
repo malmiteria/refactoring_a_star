@@ -2,14 +2,14 @@ from settings import SCREEN_WIDTH, SCREEN_HEIGHT, ROW, COLS
 
 class Spot:
     def __init__(self, x, y, grid):
+        self.grid = grid
         self.i = x
         self.j = y
         self.full_cost_expected = 0
         self.cost_to_reach = 0
         self.heuristic_cost_expected = 0
-        self.grid = grid
-        self.previous = None
         self.obstructed = False
+        self.previous = None
         self.state = None
 
     def possible_neighboring(self):
