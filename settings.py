@@ -13,3 +13,6 @@ COLS = 50
 ROW = 50
 w = SCREEN_WIDTH / COLS
 h = SCREEN_HEIGHT / ROW
+
+def show(spot, color, st):
+    pygame.draw.rect(screen, color, (spot.i * w, spot.j * h, w, h), st)

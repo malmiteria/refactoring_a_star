@@ -1,10 +1,4 @@
-
-import pygame
-
-from settings import screen, w, h, WHITE, GREY, PINK, BLUE, GREEN, RED
-
-def show(spot, color, st):
-    pygame.draw.rect(screen, color, (spot.i * w, spot.j * h, w, h), st)
+from settings import show, WHITE, GREY, PINK, BLUE, GREEN, RED
 
 def color_walls(wall_spot):
     for spot in wall_spot:
