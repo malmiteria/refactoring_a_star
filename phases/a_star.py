@@ -30,17 +30,17 @@ class AStar:
         self.open_if_needed(neighbor)
 
     def reparent_if_needed(self, current, spot, cost):
-        if spot.better_parent(self, cost):
+        if spot.better_parent(cost):
             spot.previous = current
 
     def update_all_cost(self, spot, cost):
-        if spot.is_new_or_cost_lower(self, cost):
+        if spot.is_new_or_cost_lower(cost):
             spot.cost_to_reach = cost
         spot.heuristic_cost_expected = self.heuristic(spot, self.grid.end)
         spot.full_cost_expected = spot.cost_to_reach + spot.heuristic_cost_expected
 
     def open_if_needed(self, spot):
-        if spot.not_seen_yet(self):
+        if spot.not_seen_yet():
             spot.open()
     # END HANDLE ONE NEIGHBOR
 

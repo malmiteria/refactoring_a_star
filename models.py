@@ -1,7 +1,7 @@
 
 import pygame
 
-from settings import SCREEN_WIDTH, SCREEN_HEIGHT, ROW, COLS, h, w, screen
+from settings import SCREEN_WIDTH, SCREEN_HEIGHT, ROW, COLS
 
 class Spot:
     def __init__(self, x, y, grid):
@@ -42,19 +42,19 @@ class Spot:
             yield spot
 
     # state in a_star 
-    def is_opened(self, a_star):
+    def is_opened(self):
         return self.state == 'open'
 
-    def not_seen_yet(self, a_star):
+    def not_seen_yet(self):
         return self.state is None
 
-    def better_parent(self, a_star, cost):
+    def better_parent(self, cost):
         return self.previous is None or \
-            self.is_opened(a_star) and \
+            self.is_opened() and \
             self.cost_to_reach > cost
 
-    def is_new_or_cost_lower(self, a_star, cost):
-        return self.not_seen_yet(a_star) or \
+    def is_new_or_cost_lower(self, cost):
+        return self.not_seen_yet() or \
             self.cost_to_reach > cost
 
     def open(self):
@@ -74,9 +74,6 @@ class Grid(object):
 
         for spot in self.outer_ring_spots():
             spot.obstructed = True
-
-    def spot_at(self, i, j):
-        return self.grid[i][j]
 
     def outer_ring_spots(self):
         for spot in self.grid[0]:
@@ -130,14 +127,17 @@ class Grid(object):
     def set_end(self, x, y):
         self.end = self.grid[x][y]
 
-    def spot_from_coordinates(self, x, y):
-        g1 = x // (SCREEN_HEIGHT // COLS)
-        g2 = y // (SCREEN_WIDTH // ROW)
-        return self.grid[g1][g2]
-
     def spot_can_be_a_wall(self, spot):
         return spot != self.start and spot != self.end and not spot.obstructed
 
     def turn_spot_to_wall_if_possible(self, spot):
         if self.spot_can_be_a_wall(spot):
             spot.obstructed = True
+
+    def spot_at(self, i, j):
+        return self.grid[i][j]
+
+    def spot_from_coordinates(self, x, y):
+        g1 = x // (SCREEN_HEIGHT // COLS)
+        g2 = y // (SCREEN_WIDTH // ROW)
+        return self.grid[g1][g2]
