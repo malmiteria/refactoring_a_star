@@ -37,9 +37,9 @@ class ColorAStar:
             show(spot, BLUE, 0)
 
     def color_open_and_closed(self):
-        for spot in self.a_star.openSet:
+        for spot in self.a_star.grid.opened():
             show(spot, GREEN, 0)
 
-        for spot in self.a_star.closedSet:
-            if spot != self.a_star.start:
+        for spot in self.a_star.grid.closed():
+            if spot != self.a_star.grid.start:
                 show(spot, RED, 0)

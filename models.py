@@ -13,6 +13,7 @@ class Spot:
         self.grid = grid
         self.previous = None
         self.obstructed = False
+        self.state = None
 
     def possible_neighboring(self):
         for i in range(-1,2):
@@ -42,12 +43,10 @@ class Spot:
 
     # state in a_star 
     def is_opened(self, a_star):
-        return self not in a_star.closedSet and \
-            self in a_star.openSet
+        return self.state == 'open'
 
     def not_seen_yet(self, a_star):
-        return self not in a_star.closedSet and \
-            self not in a_star.openSet
+        return self.state is None
 
     def better_parent(self, a_star, cost):
         return self.previous is None or \
@@ -57,6 +56,12 @@ class Spot:
     def is_new_or_cost_lower(self, a_star, cost):
         return self.not_seen_yet(a_star) or \
             self.cost_to_reach > cost
+
+    def open(self):
+        self.state = 'open'
+
+    def close(self):
+        self.state = 'close'
 
 
 class Grid(object):
@@ -98,6 +103,26 @@ class Grid(object):
             if spot.obstructed:
                 continue
             yield spot
+
+    def opened(self):
+        for spot in self.all_spots():
+            if spot.state != 'open':
+                continue
+            yield spot
+
+    def closed(self):
+        for spot in self.all_spots():
+            if spot.state != 'close':
+                continue
+            yield spot
+
+    def smallest_opened_in_cost(self):
+        opened_spots = self.opened()
+        least_expensive_spot = next(opened_spots)
+        for spot in opened_spots:
+            if spot.full_cost_expected < least_expensive_spot.full_cost_expected:
+                least_expensive_spot = spot
+        return least_expensive_spot
 
     def set_start(self, x, y):
         self.start = self.grid[x][y]

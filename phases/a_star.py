@@ -3,23 +3,15 @@ import math
 class AStar:
 
     def __init__(self, grid):
-        self.start = grid.start
-        self.end = grid.end
-        self.openSet = []
-        self.closedSet = []
-        self.update_all_cost(self.start, 0)
-        self.openSet.append(self.start)
+        self.grid = grid
+        self.update_all_cost(self.grid.start, 0)
+        self.grid.start.open()
 
     def heuristic(self, n, e): # Estimated cost between 2 nodes (accurate when they're neighbor)
         return math.sqrt((n.i - e.i)**2 + (n.j - e.j)**2)
 
-    def smallest_in_cost(self): # used to determine next node to pick
-        spots_cost = [spot.full_cost_expected for spot in self.openSet]
-        lowestIndex = spots_cost.index(min(spots_cost))
-        return self.openSet[lowestIndex]
-
     def start_to_end(self, current):
-        while current is not self.start:
+        while current is not self.grid.start:
             yield current
             current = current.previous
 
@@ -44,26 +36,25 @@ class AStar:
     def update_all_cost(self, spot, cost):
         if spot.is_new_or_cost_lower(self, cost):
             spot.cost_to_reach = cost
-        spot.heuristic_cost_expected = self.heuristic(spot, self.end)
+        spot.heuristic_cost_expected = self.heuristic(spot, self.grid.end)
         spot.full_cost_expected = spot.cost_to_reach + spot.heuristic_cost_expected
 
     def open_if_needed(self, spot):
         if spot.not_seen_yet(self):
-            self.openSet.append(spot)
+            spot.open()
     # END HANDLE ONE NEIGHBOR
 
     def step(self):
-        if len(self.openSet) <= 0:
+        if len(list(self.grid.opened())) <= 0:
             return
 
-        current = self.smallest_in_cost()
+        current = self.grid.smallest_opened_in_cost()
         
-        if current == self.end:
+        if current == self.grid.end:
             print('done', current.full_cost_expected)
             return current.full_cost_expected, self.inner_path(current)
 
-        self.openSet.remove(current)
-        self.closedSet.append(current)
+        current.close()
 
         self.handle_all_neighbors(current)
 
