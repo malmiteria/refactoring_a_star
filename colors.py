@@ -32,8 +32,11 @@ class ColorAStar:
 
     def color_open_and_closed(self):
         for spot in self.a_star.grid.opened():
-            show(spot, GREEN, 0)
+            if spot != self.a_star.grid.start:
+                if spot != self.a_star.grid.end:
+                    show(spot, GREEN, 0)
 
         for spot in self.a_star.grid.closed():
             if spot != self.a_star.grid.start:
-                show(spot, RED, 0)
+                if spot != self.a_star.grid.end:
+                    show(spot, RED, 0)

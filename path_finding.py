@@ -13,13 +13,12 @@ grid_controller.run()
 a_star = phases.a_star.AStar(grid_controller.grid)
 a_star_color = ColorAStar(a_star)
 
+
 while True:
     ev = pygame.event.poll()
     if ev.type == pygame.QUIT:
         pygame.quit()
     pygame.display.update()
-
-    grid_controller.grid_color.color_start_and_end()
 
     stopped = a_star.step()
     if stopped:
