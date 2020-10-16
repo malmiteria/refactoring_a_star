@@ -2,7 +2,6 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
 import os
-import pygame
 
 # First window for asking first and end node
 
