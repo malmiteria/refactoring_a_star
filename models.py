@@ -1,6 +1,3 @@
-
-import pygame
-
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT, ROW, COLS
 
 class Spot:
